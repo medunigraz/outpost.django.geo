@@ -8,17 +8,9 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0008_copy_level_data'),
-    ]
+    dependencies = [("geo", "0008_copy_level_data")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='beacon',
-            name='floor',
-        ),
-        migrations.RemoveField(
-            model_name='node',
-            name='floor',
-        ),
+        migrations.RemoveField(model_name="beacon", name="floor"),
+        migrations.RemoveField(model_name="node", name="floor"),
     ]

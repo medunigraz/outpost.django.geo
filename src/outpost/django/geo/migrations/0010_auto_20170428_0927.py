@@ -8,14 +8,12 @@ from ...base.fields import LowerCaseCharField
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0009_remove_floor'),
-    ]
+    dependencies = [("geo", "0009_remove_floor")]
 
     operations = [
         migrations.AlterField(
-            model_name='pointofinterest',
-            name='color',
-            field=LowerCaseCharField(default='007b3c', max_length=6),
-        ),
+            model_name="pointofinterest",
+            name="color",
+            field=LowerCaseCharField(default="007b3c", max_length=6),
+        )
     ]

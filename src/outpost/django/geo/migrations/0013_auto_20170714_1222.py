@@ -7,22 +7,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0012_auto_20170630_1347'),
-    ]
+    dependencies = [("geo", "0012_auto_20170630_1347")]
 
     operations = [
         migrations.AlterModelOptions(
-            name='edgecategory',
-            options={'ordering': ('weight',)},
+            name="edgecategory", options={"ordering": ("weight",)}
         ),
         migrations.AlterModelOptions(
-            name='pointofinterest',
-            options={'ordering': ('order',)},
+            name="pointofinterest", options={"ordering": ("order",)}
         ),
         migrations.AddField(
-            model_name='pointofinterest',
-            name='order',
+            model_name="pointofinterest",
+            name="order",
             field=models.PositiveIntegerField(db_index=True, default=1, editable=False),
             preserve_default=False,
         ),

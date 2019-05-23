@@ -12,16 +12,13 @@ from . import models
 
 @admin.register(models.Building)
 class BuildingAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'campusonline', 'origin')
+    list_display = ("__str__", "campusonline", "origin")
 
 
 @admin.register(models.Floor)
 class FloorAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'level', 'campusonline', 'origin')
-    list_filter = (
-        'level',
-        'building',
-    )
+    list_display = ("__str__", "level", "campusonline", "origin")
+    list_filter = ("level", "building")
 
 
 class SourceEdgeInline(admin.TabularInline):
@@ -36,30 +33,22 @@ class DestinationEdgeInline(admin.TabularInline):
 
 class NodeChildAdmin(PolymorphicChildModelAdmin):
     base_model = models.Node
-    inlines = [
-        DestinationEdgeInline,
-        SourceEdgeInline,
-    ]
+    inlines = [DestinationEdgeInline, SourceEdgeInline]
 
 
 @admin.register(models.Node)
 class NodeParentAdmin(PolymorphicParentModelAdmin):
     base_model = models.Node
     child_models = (models.Door, models.Room)
-    list_filter = (
-        PolymorphicChildModelFilter,
-        'level',
-    )
+    list_filter = (PolymorphicChildModelFilter, "level")
 
 
 @admin.register(models.Door)
 class DoorAdmin(NodeChildAdmin):
     base_model = models.Door
     show_in_index = True
-    list_display = ('__str__', 'level', 'origin')
-    list_filter = (
-        'level',
-    )
+    list_display = ("__str__", "level", "origin")
+    list_filter = ("level",)
 
 
 @admin.register(models.Room)
@@ -67,22 +56,15 @@ class RoomAdmin(NodeChildAdmin):
     base_model = models.Room
     show_in_index = True
     list_display = (
-        '__str__',
-        'level',
-        'campusonline',
-        'organization',
-        'category',
-        'origin',
+        "__str__",
+        "level",
+        "campusonline",
+        "organization",
+        "category",
+        "origin",
     )
-    list_filter = (
-        'level',
-        'organization',
-        'category',
-    )
-    search_fields = (
-        'name',
-        'campusonline__title',
-    )
+    list_filter = ("level", "organization", "category")
+    search_fields = ("name", "campusonline__title")
 
 
 @admin.register(models.RoomCategory)
@@ -97,12 +79,12 @@ class BackgroundAdmin(admin.ModelAdmin):
 
 @admin.register(models.Level)
 class LevelAdmin(OrderedModelAdmin):
-    list_display = ('__str__', 'move_up_down_links')
+    list_display = ("__str__", "move_up_down_links")
 
 
 @admin.register(models.EdgeCategory)
 class EdgeCategoryAdmin(VersionAdmin, admin.ModelAdmin):
-    list_display = ('__str__', 'multiplicator', 'addition')
+    list_display = ("__str__", "multiplicator", "addition")
 
 
 @admin.register(models.Edge)
@@ -116,7 +98,5 @@ class PointOfInterestInstanceInline(admin.TabularInline):
 
 @admin.register(models.PointOfInterest)
 class PointOfInterestAdmin(OrderedModelAdmin):
-    list_display = ('__str__', 'move_up_down_links')
-    inlines = [
-        PointOfInterestInstanceInline,
-    ]
+    list_display = ("__str__", "move_up_down_links")
+    inlines = [PointOfInterestInstanceInline]

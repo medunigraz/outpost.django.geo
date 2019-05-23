@@ -7,20 +7,20 @@ import django.db.models.deletion
 
 
 def forwards(apps, schema_editor):
-    Level = apps.get_model('geo', 'Level')
+    Level = apps.get_model("geo", "Level")
     if Level.objects.all().exists():
         level = Level.objects.first()
     else:
-        level = Level(name='Migration', order=1)
+        level = Level(name="Migration", order=1)
         level.save()
-    Beacon = apps.get_model('geo', 'Beacon')
+    Beacon = apps.get_model("geo", "Beacon")
     for beacon in Beacon.objects.all():
         if beacon.floor.level:
             beacon.level = beacon.floor.level
         else:
             beacon.level = level
         beacon.save()
-    Node = apps.get_model('geo', 'Node')
+    Node = apps.get_model("geo", "Node")
     for node in Node.objects.all():
         if node.floor.level:
             node.level = node.floor.level
@@ -31,10 +31,6 @@ def forwards(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0007_add_level'),
-    ]
+    dependencies = [("geo", "0007_add_level")]
 
-    operations = [
-        migrations.RunPython(forwards, migrations.RunPython.noop),
-    ]
+    operations = [migrations.RunPython(forwards, migrations.RunPython.noop)]

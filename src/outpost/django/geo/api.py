@@ -6,10 +6,8 @@ from rest_framework.permissions import (
     DjangoModelPermissions,
     DjangoModelPermissionsOrAnonReadOnly,
 )
-from rest_framework.viewsets import (
-    ModelViewSet,
-    ReadOnlyModelViewSet,
-)
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+
 # from rest_framework_extensions.mixins import (
 #     CacheResponseAndETAGMixin,
 # )
@@ -21,30 +19,20 @@ from rest_framework_extensions.etag.mixins import ListETAGMixin
 from rest_framework_gis.filters import InBBoxFilter
 from reversion.views import RevisionMixin
 
-from outpost.django.base.mixins import (
-    GeoModelViewSet,
-    MediatypeNegotiationMixin,
-)
+from outpost.django.base.mixins import GeoModelViewSet, MediatypeNegotiationMixin
 
 from . import filters
 from . import key_constructors as keys
-from . import (
-    models,
-    serializers,
-)
+from . import models, serializers
 
 
 class BackgroundViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     queryset = models.Background.objects.all()
     serializer_class = serializers.BackgroundSerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
-    bbox_filter_field = 'layout'
-    filter_backends = (
-        InBBoxFilter,
-    )
+    bbox_filter_field = "layout"
+    filter_backends = (InBBoxFilter,)
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.BackgroundListKeyConstructor()
     list_etag_func = keys.BackgroundListKeyConstructor()
@@ -53,20 +41,14 @@ class BackgroundViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
 class LevelViewSet(ModelViewSet):
     queryset = models.Level.objects.all()
     serializer_class = serializers.LevelSerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
 
 
 class RoomCategoryViewSet(RevisionMixin, ModelViewSet):
     queryset = models.RoomCategory.objects.all()
     serializer_class = serializers.RoomCategorySerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
-    filter_fields = (
-        'searchable',
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+    filter_fields = ("searchable",)
 
 
 class RoomViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
@@ -83,17 +65,13 @@ class RoomViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
 
         ?level=<id>&category=<id>
     """
+
     queryset = models.Room.objects.filter(deprecated=False, virtual=False)
     serializer_class = serializers.RoomSerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
-    bbox_filter_field = 'layout'
-    filter_backends = (
-        DjangoFilterBackend,
-        InBBoxFilter,
-    )
+    bbox_filter_field = "layout"
+    filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filter_class = filters.RoomFilter
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.RoomListKeyConstructor()
@@ -103,24 +81,17 @@ class RoomViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
 class RoomSearchViewSet(HaystackViewSet):
     index_models = [models.Room]
     serializer_class = serializers.RoomSearchSerializer
-    permission_classes = (
-        AllowAny,
-    )
+    permission_classes = (AllowAny,)
 
 
 class DoorViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     queryset = models.Door.objects.filter(deprecated=False)
     serializer_class = serializers.DoorSerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
-    filter_backends = (
-        DjangoFilterBackend,
-        InBBoxFilter,
-    )
+    filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filter_class = filters.DoorFilter
-    bbox_filter_field = 'layout'
+    bbox_filter_field = "layout"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.DoorListKeyConstructor()
     list_etag_func = keys.DoorListKeyConstructor()
@@ -129,16 +100,11 @@ class DoorViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
 class FloorViewSet(ListETAGMixin, ListCacheResponseMixin, RevisionMixin, ModelViewSet):
     queryset = models.Floor.objects.all()
     serializer_class = serializers.FloorSerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
-    filter_backends = (
-        DjangoFilterBackend,
-        InBBoxFilter,
-    )
+    filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filter_class = filters.FloorFilter
-    bbox_filter_field = 'outline'
+    bbox_filter_field = "outline"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.FloorListKeyConstructor()
     list_etag_func = keys.FloorListKeyConstructor()
@@ -147,16 +113,11 @@ class FloorViewSet(ListETAGMixin, ListCacheResponseMixin, RevisionMixin, ModelVi
 class BuildingViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     queryset = models.Building.objects.all()
     serializer_class = serializers.BuildingSerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
-    filter_backends = (
-        DjangoFilterBackend,
-        InBBoxFilter,
-    )
+    filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filter_class = filters.BuildingFilter
-    bbox_filter_field = 'outline'
+    bbox_filter_field = "outline"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.BuildingListKeyConstructor()
     list_etag_func = keys.BuildingListKeyConstructor()
@@ -165,38 +126,26 @@ class BuildingViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
 class NodeViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     queryset = models.Node.objects.all()
     serializer_class = serializers.NodeSerializer
-    permission_classes = (
-        IsAuthenticatedOrTokenHasScope,
-        DjangoModelPermissions,
-    )
+    permission_classes = (IsAuthenticatedOrTokenHasScope, DjangoModelPermissions)
     pagination_class = None
-    filter_backends = (
-        DjangoFilterBackend,
-        InBBoxFilter,
-    )
+    filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filter_class = filters.NodeFilter
-    bbox_filter_field = 'center'
+    bbox_filter_field = "center"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.NodeListKeyConstructor()
     list_etag_func = keys.NodeListKeyConstructor()
-    required_scopes = (
-        'editor',
-    )
+    required_scopes = ("editor",)
 
 
 class EdgeCategoryViewSet(ModelViewSet):
     """
     """
+
     queryset = models.EdgeCategory.objects.all()
     serializer_class = serializers.EdgeCategorySerializer
-    permission_classes = (
-        IsAuthenticatedOrTokenHasScope,
-        DjangoModelPermissions,
-    )
+    permission_classes = (IsAuthenticatedOrTokenHasScope, DjangoModelPermissions)
     pagination_class = None
-    required_scopes = (
-        'editor',
-    )
+    required_scopes = ("editor",)
 
 
 class EdgeViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
@@ -216,22 +165,15 @@ class EdgeViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
         ...?source__level=<id>
         ...?destination__level=<id>
     """
+
     queryset = models.Edge.objects.all()
     serializer_class = serializers.EdgeSerializer
-    permission_classes = (
-        IsAuthenticatedOrTokenHasScope,
-        DjangoModelPermissions,
-    )
-    required_scopes = (
-        'editor',
-    )
+    permission_classes = (IsAuthenticatedOrTokenHasScope, DjangoModelPermissions)
+    required_scopes = ("editor",)
     pagination_class = None
-    filter_backends = (
-        DjangoFilterBackend,
-        InBBoxFilter,
-    )
+    filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filter_class = filters.EdgeFilter
-    bbox_filter_field = 'path'
+    bbox_filter_field = "path"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.EdgeListKeyConstructor()
     list_etag_func = keys.EdgeListKeyConstructor()
@@ -240,37 +182,39 @@ class EdgeViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
 class PointOfInterestViewSet(ListETAGMixin, ListCacheResponseMixin, ModelViewSet):
     """
     """
+
     queryset = models.PointOfInterest.objects.all()
     serializer_class = serializers.PointOfInterestSerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
     list_cache_key_func = keys.PointOfInterestListKeyConstructor()
     list_etag_func = keys.PointOfInterestListKeyConstructor()
 
 
-class PointOfInterestInstanceViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
+class PointOfInterestInstanceViewSet(
+    ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet
+):
     """
     """
+
     queryset = models.PointOfInterestInstance.objects.all()
     serializer_class = serializers.PointOfInterestInstanceSerializer
-    permission_classes = (
-        DjangoModelPermissionsOrAnonReadOnly,
-    )
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
-    filter_backends = (
-        DjangoFilterBackend,
-        InBBoxFilter,
-    )
+    filter_backends = (DjangoFilterBackend, InBBoxFilter)
     filter_class = filters.PointOfInterestInstanceFilter
-    bbox_filter_field = 'center'
+    bbox_filter_field = "center"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.PointOfInterestInstanceListKeyConstructor()
     list_etag_func = keys.PointOfInterestInstanceListKeyConstructor()
 
 
-class RoutingEdgeViewSet(ListETAGMixin, ListCacheResponseMixin, MediatypeNegotiationMixin, ReadOnlyModelViewSet):
+class RoutingEdgeViewSet(
+    ListETAGMixin,
+    ListCacheResponseMixin,
+    MediatypeNegotiationMixin,
+    ReadOnlyModelViewSet,
+):
     """
     Query the edge graph for a route between two nodes:
 
@@ -283,16 +227,15 @@ class RoutingEdgeViewSet(ListETAGMixin, ListCacheResponseMixin, MediatypeNegotia
     The order of the result resembles the sequence of paths required to take to
     get from **source** to **target**.
     """
+
     serializer_class = serializers.RoutingEdgeSerializer
-    permission_classes = (
-        AllowAny,
-    )
-    bbox_filter_field = 'path'
+    permission_classes = (AllowAny,)
+    bbox_filter_field = "path"
     pagination_class = None
     list_cache_key_func = keys.RoutingEdgeListKeyConstructor()
     list_etag_func = keys.RoutingEdgeListKeyConstructor()
 
-    statement = '''
+    statement = """
         SELECT
             r.seq AS sequence,
             e.*
@@ -346,20 +289,15 @@ class RoutingEdgeViewSet(ListETAGMixin, ListCacheResponseMixin, MediatypeNegotia
             r.edge = e.id AND
             r.edge >= 0
         ORDER BY r.seq ASC
-    '''
+    """
 
     def get_queryset(self):
-        source = self.request.GET.get('from', None)
-        target = self.request.GET.get('to', None)
-        accessible = 'accessible' in self.request.GET
+        source = self.request.GET.get("from", None)
+        target = self.request.GET.get("to", None)
+        accessible = "accessible" in self.request.GET
         if not all((source, target)):
             return models.Edge.objects.none()
         return models.Edge.objects.raw(
-            self.statement.format(
-                accessible=str(accessible).upper()
-            ),
-            dict(
-                source=source,
-                target=target
-            )
+            self.statement.format(accessible=str(accessible).upper()),
+            dict(source=source, target=target),
         )

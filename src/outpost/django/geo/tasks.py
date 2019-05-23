@@ -15,7 +15,7 @@ class GeoSyncTask(PeriodicTask):
 
     def run(self, **kwargs):
         rooms = Room.objects.exclude(campusonline__organization=None)
-        logger.info('Synchronizing {} geo.Room'.format(rooms.count()))
+        logger.info("Synchronizing {} geo.Room".format(rooms.count()))
         for r in rooms:
             o = Organization.objects.get(campusonline=r.campusonline.organization)
             r.organization = o

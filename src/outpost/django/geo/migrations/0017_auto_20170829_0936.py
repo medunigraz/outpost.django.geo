@@ -7,25 +7,20 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0016_room_organization'),
-    ]
+    dependencies = [("geo", "0016_room_organization")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='pointofinterest',
-            name='icon',
-        ),
+        migrations.RemoveField(model_name="pointofinterest", name="icon"),
         migrations.AddField(
-            model_name='pointofinterest',
-            name='css_class',
-            field=models.CharField(default='', max_length=128),
+            model_name="pointofinterest",
+            name="css_class",
+            field=models.CharField(default="", max_length=128),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='pointofinterest',
-            name='font_key',
-            field=models.CharField(default='', max_length=1),
+            model_name="pointofinterest",
+            name="font_key",
+            field=models.CharField(default="", max_length=1),
             preserve_default=False,
         ),
     ]

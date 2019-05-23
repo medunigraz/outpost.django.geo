@@ -7,17 +7,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0018_auto_20170829_0937'),
-    ]
+    dependencies = [("geo", "0018_auto_20170829_0937")]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='node',
-            options={},
-        ),
-        migrations.AlterModelOptions(
-            name='pointofinterestinstance',
-            options={},
-        ),
+        migrations.AlterModelOptions(name="node", options={}),
+        migrations.AlterModelOptions(name="pointofinterestinstance", options={}),
     ]

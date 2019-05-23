@@ -7,13 +7,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0003_auto_20170418_1535'),
-    ]
+    dependencies = [("geo", "0003_auto_20170418_1535")]
 
-    operations = [
-        migrations.RemoveField(
-            model_name='edge',
-            name='door',
-        ),
-    ]
+    operations = [migrations.RemoveField(model_name="edge", name="door")]

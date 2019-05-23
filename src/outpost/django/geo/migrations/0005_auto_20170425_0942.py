@@ -8,34 +8,33 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0004_remove_edge_door'),
-    ]
+    dependencies = [("geo", "0004_remove_edge_door")]
 
     operations = [
         migrations.CreateModel(
-            name='Level',
+            name="Level",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('order', models.PositiveIntegerField(db_index=True, editable=False)),
-                ('name', models.CharField(max_length=16)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("order", models.PositiveIntegerField(db_index=True, editable=False)),
+                ("name", models.CharField(max_length=16)),
             ],
-            options={
-                'abstract': False,
-                'ordering': ('order',),
-            },
+            options={"abstract": False, "ordering": ("order",)},
         ),
-        migrations.AlterModelOptions(
-            name='floor',
-            options={},
-        ),
-        migrations.RemoveField(
-            model_name='floor',
-            name='order',
-        ),
+        migrations.AlterModelOptions(name="floor", options={}),
+        migrations.RemoveField(model_name="floor", name="order"),
         migrations.AddField(
-            model_name='floor',
-            name='level',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='geo.Level'),
+            model_name="floor",
+            name="level",
+            field=models.ForeignKey(
+                null=True, on_delete=django.db.models.deletion.CASCADE, to="geo.Level"
+            ),
         ),
     ]

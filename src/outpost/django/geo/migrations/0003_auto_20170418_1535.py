@@ -7,29 +7,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0002_floor_outline'),
-    ]
+    dependencies = [("geo", "0002_floor_outline")]
 
     operations = [
         migrations.AddField(
-            model_name='building',
-            name='origin',
-            field=models.IntegerField(null=True),
+            model_name="building", name="origin", field=models.IntegerField(null=True)
         ),
         migrations.AddField(
-            model_name='door',
-            name='origin',
-            field=models.IntegerField(null=True),
+            model_name="door", name="origin", field=models.IntegerField(null=True)
         ),
         migrations.AddField(
-            model_name='floor',
-            name='origin',
-            field=models.IntegerField(null=True),
+            model_name="floor", name="origin", field=models.IntegerField(null=True)
         ),
         migrations.AddField(
-            model_name='room',
-            name='origin',
-            field=models.IntegerField(null=True),
+            model_name="room", name="origin", field=models.IntegerField(null=True)
         ),
     ]

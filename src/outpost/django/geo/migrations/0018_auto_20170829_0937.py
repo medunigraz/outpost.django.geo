@@ -7,14 +7,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0017_auto_20170829_0936'),
-    ]
+    dependencies = [("geo", "0017_auto_20170829_0936")]
 
     operations = [
         migrations.AlterField(
-            model_name='pointofinterestinstance',
-            name='description',
+            model_name="pointofinterestinstance",
+            name="description",
             field=models.TextField(blank=True, null=True),
-        ),
+        )
     ]

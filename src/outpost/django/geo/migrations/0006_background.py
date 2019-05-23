@@ -8,17 +8,28 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0005_auto_20170425_0942'),
-    ]
+    dependencies = [("geo", "0005_auto_20170425_0942")]
 
     operations = [
         migrations.CreateModel(
-            name='Background',
+            name="Background",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=16)),
-                ('outline', django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=3857)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=16)),
+                (
+                    "outline",
+                    django.contrib.gis.db.models.fields.MultiPolygonField(
+                        blank=True, null=True, srid=3857
+                    ),
+                ),
             ],
-        ),
+        )
     ]

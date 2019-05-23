@@ -8,14 +8,14 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0001_initial'),
-    ]
+    dependencies = [("geo", "0001_initial")]
 
     operations = [
         migrations.AddField(
-            model_name='floor',
-            name='outline',
-            field=django.contrib.gis.db.models.fields.MultiPolygonField(blank=True, null=True, srid=3857),
-        ),
+            model_name="floor",
+            name="outline",
+            field=django.contrib.gis.db.models.fields.MultiPolygonField(
+                blank=True, null=True, srid=3857
+            ),
+        )
     ]

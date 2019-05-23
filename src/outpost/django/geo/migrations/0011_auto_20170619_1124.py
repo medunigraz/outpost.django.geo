@@ -7,16 +7,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('geo', '0010_auto_20170428_0927'),
-    ]
+    dependencies = [("geo", "0010_auto_20170428_0927")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='beacon',
-            name='level',
-        ),
-        migrations.DeleteModel(
-            name='Beacon',
-        ),
+        migrations.RemoveField(model_name="beacon", name="level"),
+        migrations.DeleteModel(name="Beacon"),
     ]

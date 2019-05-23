@@ -5,7 +5,7 @@ from outpost.django.base.key_constructors import UpdatedAtKeyBit
 
 
 class RoutingEdgeListKeyConstructor(DefaultKeyConstructor):
-    route = bits.QueryParamsKeyBit(['from', 'to', 'accessible'])
+    route = bits.QueryParamsKeyBit(["from", "to", "accessible"])
 
 
 class BackgroundListKeyConstructor(DefaultKeyConstructor):
