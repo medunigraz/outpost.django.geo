@@ -74,8 +74,8 @@ class Building(OriginMixin, models.Model):
 @reversion.register()
 class Floor(OriginMixin, models.Model):
     name = models.TextField()
-    building = models.ForeignKey("Building")
-    level = models.ForeignKey("Level", null=True)
+    building = models.ForeignKey("Building", on_delete=models.CASCADE)
+    level = models.ForeignKey("Level", null=True, on_delete=models.CASCADE)
     outline = models.MultiPolygonField(
         null=True, blank=True, srid=settings.DEFAULT_SRID
     )
@@ -101,7 +101,7 @@ class Floor(OriginMixin, models.Model):
 @signal_connect
 @reversion.register()
 class Node(TimeStampedModel, PolymorphicModel):
-    level = models.ForeignKey("Level")
+    level = models.ForeignKey("Level", on_delete=models.CASCADE)
     center = models.PointField(srid=settings.DEFAULT_SRID)
     deprecated = models.BooleanField(default=False)
 
@@ -135,11 +135,15 @@ class EdgeCategory(models.Model):
 @signal_connect
 @reversion.register()
 class Edge(models.Model):
-    source = models.ForeignKey("node", related_name="edges_source")
-    destination = models.ForeignKey("node", related_name="edges_destination")
+    source = models.ForeignKey(
+        "node", related_name="edges_source", on_delete=models.CASCADE
+    )
+    destination = models.ForeignKey(
+        "node", related_name="edges_destination", on_delete=models.CASCADE
+    )
     one_way = models.BooleanField(default=False)
     accessible = models.BooleanField(default=False)
-    category = models.ForeignKey("EdgeCategory")
+    category = models.ForeignKey("EdgeCategory", on_delete=models.CASCADE)
     path = models.LineStringField(srid=settings.DEFAULT_SRID)
 
     def __str__(self):
@@ -178,7 +182,9 @@ class Room(OriginMixin, Node):
     layout = models.PolygonField(srid=settings.DEFAULT_SRID)
     marker = models.PointField(srid=settings.DEFAULT_SRID, default=Point(0, 0))
     virtual = models.BooleanField(default=False)
-    category = models.ForeignKey("RoomCategory", null=True, blank=True)
+    category = models.ForeignKey(
+        "RoomCategory", null=True, blank=True, on_delete=models.SET_NULL
+    )
     name = models.CharField(max_length=128, null=True, blank=True)
     campusonline = models.ForeignKey(
         "campusonline.Room",
@@ -188,7 +194,9 @@ class Room(OriginMixin, Node):
         blank=True,
         related_name="geo",
     )
-    organization = models.ForeignKey("structure.Organization", null=True, blank=True)
+    organization = models.ForeignKey(
+        "structure.Organization", null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     objects = RelatedManager(select=("category", "campusonline"))
 
@@ -268,7 +276,7 @@ class PointOfInterest(OrderedModel):
 @signal_connect
 @reversion.register(follow=["node_ptr"])
 class PointOfInterestInstance(Node):
-    name = models.ForeignKey("PointOfInterest")
+    name = models.ForeignKey("PointOfInterest", on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
 
     def __str__(self):
