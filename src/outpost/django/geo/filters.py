@@ -45,8 +45,8 @@ class EdgeFilter(django_filters.FilterSet):
     level = django_filters.NumberFilter(
         method=lambda q, n, v: EdgeFilter.filter_level(q, v)
     )
-    source_level = django_filters.NumberFilter(name="source__level")
-    destination_level = django_filters.NumberFilter(name="destination__level")
+    source_level = django_filters.NumberFilter(field_name="source__level")
+    destination_level = django_filters.NumberFilter(field_name="destination__level")
 
     class Meta:
         model = models.Edge
