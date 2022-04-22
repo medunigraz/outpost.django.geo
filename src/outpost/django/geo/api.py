@@ -1,4 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db import connection
 from drf_haystack.viewsets import HaystackViewSet
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
 from rest_framework.permissions import (
@@ -238,7 +239,13 @@ class RoutingEdgeViewSet(
     statement = """
         SELECT
             r.seq AS sequence,
-            e.*
+            e.id AS id,
+            e.one_way AS one_way,
+            e.accessible AS accessible,
+            {path_select} AS path,
+            e.destination_id AS destination_id,
+            e.source_id AS source_id,
+            e.category_id AS category_id
         FROM
             geo_edge e,
             pgr_aStar(
@@ -273,7 +280,7 @@ class RoutingEdgeViewSet(
                     CASE
                         e.accessible
                     WHEN
-                        {accessible}
+                        {{accessible}}
                     THEN
                         TRUE
                     ELSE
@@ -289,7 +296,7 @@ class RoutingEdgeViewSet(
             r.edge = e.id AND
             r.edge >= 0
         ORDER BY r.seq ASC
-    """
+    """.format(path_select=connection.ops.select % 'e.path')
 
     def get_queryset(self):
         source = self.request.GET.get("from", None)
