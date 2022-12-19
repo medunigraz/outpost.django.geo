@@ -29,9 +29,14 @@ class Migration(migrations.Migration):
             name='order',
             field=models.PositiveIntegerField(db_index=True, editable=False, verbose_name='order'),
         ),
-        migrations.AlterField(
-            model_name='room',
-            name='layout',
-            field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=3857),
-        ),
+        migrations.RunSQL(
+            "ALTER TABLE geo_room ALTER COLUMN layout type geometry(MultiPolygon, 3857) using ST_Multi(layout);",
+            state_operations=[
+                migrations.AlterField(
+                    model_name='room',
+                    name='layout',
+                    field=django.contrib.gis.db.models.fields.MultiPolygonField(srid=3857),
+                ),
+            ],
+        )
     ]
