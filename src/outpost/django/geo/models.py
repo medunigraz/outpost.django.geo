@@ -5,6 +5,7 @@ from django.contrib.gis.db import models
 from django.contrib.gis.geos import LineString, Point
 from django.db.models import Q
 from django_extensions.db.models import TimeStampedModel
+from itertools import chain
 from ordered_model.models import OrderedModel
 from polymorphic.models import PolymorphicModel
 
@@ -221,9 +222,8 @@ class Room(OriginMixin, Node):
             # Filter all [(x,y)] where y = max_y
             # Select maximum y from [(x,y)] and save as marker anchor point
             c = self.layout.coords
-            max_y = max(map(lambda k: y(k), c[0]))
             self.marker = Point(
-                min(filter(lambda k: y(k) == max_y, c[0]), key=lambda k: x(k)),
+                max(chain.from_iterable(chain.from_iterable(c)), key=lambda k: k[1]),
                 srid=settings.DEFAULT_SRID,
             )
 
