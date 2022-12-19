@@ -179,7 +179,7 @@ class RoomCategory(models.Model):
 @signal_connect
 @reversion.register(follow=["node_ptr"])
 class Room(OriginMixin, Node):
-    layout = models.PolygonField(srid=settings.DEFAULT_SRID)
+    layout = models.MultiPolygonField(srid=settings.DEFAULT_SRID)
     marker = models.PointField(srid=settings.DEFAULT_SRID, default=Point(0, 0))
     virtual = models.BooleanField(default=False)
     category = models.ForeignKey(
