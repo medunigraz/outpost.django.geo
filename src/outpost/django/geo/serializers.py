@@ -1,3 +1,4 @@
+from django.conf import settings
 from drf_haystack.serializers import HaystackSerializer
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
@@ -89,6 +90,14 @@ class NodeSerializer(GeoFeatureModelSerializer):
 
     def get_ctype(self, obj):
         return obj.polymorphic_ctype.name
+
+    def to_internal_value(self, data):
+        if "crs" not in data.get("center"):
+            data["center"]["crs"] = {
+                "type": "name",
+                "properties": {"name": f"EPSG:{settings.DEFAULT_SRID}"},
+            }
+        return super().to_internal_value(data)
 
 
 class NestedNodeSerializer(NodeSerializer):
