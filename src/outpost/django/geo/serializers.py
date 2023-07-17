@@ -92,11 +92,15 @@ class NodeSerializer(GeoFeatureModelSerializer):
         return obj.polymorphic_ctype.name
 
     def to_internal_value(self, data):
-        if "crs" not in data.get("center"):
-            data["center"]["crs"] = {
+        center = data.get("center")
+        if isinstance(center, str):
+            center = json.loads(center)
+        if "crs" not in center:
+            center["crs"] = {
                 "type": "name",
                 "properties": {"name": f"EPSG:{settings.DEFAULT_SRID}"},
             }
+        data["center"] = center
         return super().to_internal_value(data)
 
 
