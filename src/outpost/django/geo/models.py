@@ -1,18 +1,21 @@
+from itertools import chain
+
 import reversion
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import LineString, Point
+from django.contrib.gis.geos import (
+    LineString,
+    Point,
+)
 from django.db.models import Q
 from django_extensions.db.models import TimeStampedModel
-from itertools import chain
 from ordered_model.models import OrderedModel
-from polymorphic.models import PolymorphicModel
-
 from outpost.django.base.decorators import signal_connect
 from outpost.django.base.fields import LowerCaseCharField
 from outpost.django.base.key_constructors import UpdatedAtKeyBit
 from outpost.django.base.models import RelatedManager
+from polymorphic.models import PolymorphicModel
 
 
 class OriginMixin(models.Model):

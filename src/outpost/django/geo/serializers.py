@@ -1,11 +1,16 @@
 from django.conf import settings
 from drf_haystack.serializers import HaystackSerializer
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from outpost.django.campusonline import serializers as campusonline
+from rest_framework.serializers import (
+    ModelSerializer,
+    SerializerMethodField,
+)
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from outpost.django.campusonline import serializers as campusonline
-
-from . import models, search_indexes
+from . import (
+    models,
+    search_indexes,
+)
 
 
 class BackgroundSerializer(GeoFeatureModelSerializer):
