@@ -204,6 +204,9 @@ class Room(OriginMixin, Node):
 
     objects = RelatedManager(select=("category", "campusonline"))
 
+    class Meta:
+        ordering = "campusonline.name_full"
+
     def __str__(self):
         if self.name:
             return self.name
