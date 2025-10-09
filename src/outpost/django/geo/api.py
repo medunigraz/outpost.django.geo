@@ -308,3 +308,22 @@ class RoutingEdgeViewSet(
             self.statement.format(accessible=str(accessible).upper()),
             dict(source=source, target=target),
         )
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        
+        # Calculate total duration
+        total_duration = sum(edge.get('duration', 0) for edge in serializer.data)
+        total_distance = sum(edge.get('length', 0) for edge in serializer.data)
+        
+        return Response({
+            'type': 'FeatureCollection',
+            'features': serializer.data,
+            'metadata': {
+                'total_duration_seconds': round(total_duration),
+                'total_duration_minutes': round(total_duration / 60, 1),
+                'total_distance_meters': round(total_distance, 1),
+                'edge_count': len(serializer.data)
+            }
+        })
