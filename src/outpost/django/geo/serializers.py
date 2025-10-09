@@ -134,35 +134,16 @@ class EdgeSerializer(GeoFeatureModelSerializer):
         return obj.path.length
     
     def get_duration(self, obj):
-        # Estimate based on edge category
-        # Average walking speed: 1.4 m/s (5 km/h)
-        # Elevator: 30 seconds base + 3 seconds per floor
-        # Stairs: 15 seconds per floor
-    
+        """
+        Calculate duration using category's formula
+        """
         length = obj.path.length
-        category = obj.category
         
-        if category.name == 'Lift':
-            # Elevator: base wait + travel time
-            source_level = obj.source.level.order if hasattr(obj.source.level, 'order') else 0
-            dest_level = obj.destination.level.order if hasattr(obj.destination.level, 'order') else 0
-            floors = abs(dest_level - source_level)
-            return 30 + (floors * 3)  # 30s wait + 3s per floor
-            
-        elif category.name == 'Stiege':
-            # Stairs: ~15 seconds per floor
-            source_level = obj.source.level.order if hasattr(obj.source.level, 'order') else 0
-            dest_level = obj.destination.level.order if hasattr(obj.destination.level, 'order') else 0
-            floors = abs(dest_level - source_level)
-            return floors * 15
-            
-        elif category.name == 'Standard':
-            # Through rooms/doors: slower walking + door time
-            return (length / 1.2) + 2  # 1.2 m/s + 2s door
-            
-        else:  # Durchgang (hallway)
-            # Normal walking speed
-            return length / 1.4  # 1.4 m/s
+        source_level = getattr(obj.source.level, 'order', 0)
+        dest_level = getattr(obj.destination.level, 'order', 0)
+        floors = abs(dest_level - source_level)
+        
+        return obj.category.calculate_duration(length, floors)
 
 
 class RoutingEdgeSerializer(EdgeSerializer):

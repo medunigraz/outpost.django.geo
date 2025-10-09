@@ -126,11 +126,45 @@ class EdgeCategory(models.Model):
     multiplicator = models.DecimalField(max_digits=4, decimal_places=1, default=1.0)
     addition = models.DecimalField(max_digits=5, decimal_places=1, default=0)
 
+    duration_formula = models.TextField(
+    blank=True,
+    default="length / 1.4",
+    help_text="Formula for duration calculation. Available variables: length, floors. Example: '30 + (floors * 3)'"
+    )
+
     class Meta:
         ordering = ("multiplicator", "addition")
 
     def __str__(self):
         return self.name or "Undefined"
+    
+    def calculate_duration(self, length, floors):
+        """
+        Evaluate the duration formula with given parameters
+        
+        Args:
+            length: Edge length in meters
+            floors: Number of floors traversed (0 for same floor)
+            
+        Returns:
+            Duration in seconds
+        """
+        try:
+            expr = parse_expr(self.duration_formula, local_dict={
+                'length': sympy.Symbol('length'),
+                'floors': sympy.Symbol('floors')
+            })
+            
+            result = expr.subs({
+                'length': length,
+                'floors': floors
+            })
+            
+            return float(result.evalf())
+            
+        except Exception as e:
+            logger.warning(f"Failed to evaluate duration formula for {self.name}: {e}")
+            return length / 1.4  # Default walking speed
 
 
 @signal_connect
