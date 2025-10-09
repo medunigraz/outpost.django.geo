@@ -267,7 +267,7 @@ class RoutingEdgeViewSet(
                     ST_X(ns.center) AS x1,
                     ST_Y(ns.center) AS y1,
                     ST_X(nd.center) AS x2,
-                    ST_Y(ns.center) AS y2
+                    ST_Y(nd.center) AS y2
                 FROM
                     geo_edge e,
                     geo_edgecategory c,
