@@ -137,17 +137,17 @@ class EdgeSerializer(GeoFeatureModelSerializer):
 
     def get_length(self, obj):
         return obj.path.length
-    
+
     def get_duration(self, obj):
         """
         Calculate duration using category's formula
         """
         length = obj.path.length
-        
-        source_level = getattr(obj.source.level, 'order', 0)
-        dest_level = getattr(obj.destination.level, 'order', 0)
+
+        source_level = getattr(obj.source.level, "order", 0)
+        dest_level = getattr(obj.destination.level, "order", 0)
         floors = abs(dest_level - source_level)
-        
+
         return obj.category.calculate_duration(length, floors)
 
 
