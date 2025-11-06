@@ -1,6 +1,8 @@
 import reversion
+import sympy
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.fields import ArrayField
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import LineString, Point
 from django.db.models import Q
@@ -13,6 +15,8 @@ from outpost.django.base.decorators import signal_connect
 from outpost.django.base.fields import LowerCaseCharField
 from outpost.django.base.key_constructors import UpdatedAtKeyBit
 from outpost.django.base.models import RelatedManager
+
+from sympy.parsing.sympy_parser import parse_expr
 
 
 class OriginMixin(models.Model):
@@ -127,9 +131,9 @@ class EdgeCategory(models.Model):
     addition = models.DecimalField(max_digits=5, decimal_places=1, default=0)
 
     duration_formula = models.TextField(
-    blank=True,
-    default="length / 1.4",
-    help_text="Formula for duration calculation. Available variables: length, floors. Example: '30 + (floors * 3)'"
+        blank=True,
+        default="length / 1.4",
+        help_text="Formula for duration calculation. Available variables: length, floors. Example: '30 + (floors * 3)'"
     )
 
     class Meta:

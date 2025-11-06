@@ -321,8 +321,7 @@ class RoutingEdgeViewSet(
             'type': 'FeatureCollection',
             'features': serializer.data,
             'metadata': {
-                'total_duration_seconds': round(total_duration),
-                'total_duration_minutes': round(total_duration / 60, 1),
+                'total_duration': round(total_duration),
                 'total_distance_meters': round(total_distance, 1),
                 'edge_count': len(serializer.data)
             }
