@@ -271,7 +271,7 @@ class RoutingEdgeViewSet(
                     ST_X(ns.center) AS x1,
                     ST_Y(ns.center) AS y1,
                     ST_X(nd.center) AS x2,
-                    ST_Y(ns.center) AS y2
+                    ST_Y(nd.center) AS y2
                 FROM
                     geo_edge e,
                     geo_edgecategory c,
@@ -314,3 +314,21 @@ class RoutingEdgeViewSet(
             self.statement.format(accessible=str(accessible).upper()),
             dict(source=source, target=target),
         )
+    
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        
+        # Calculate total duration
+        total_duration = sum(edge.get('duration', 0) for edge in serializer.data)
+        total_distance = sum(edge.get('length', 0) for edge in serializer.data)
+        
+        return Response({
+            'type': 'FeatureCollection',
+            'features': serializer.data,
+            'metadata': {
+                'total_duration': round(total_duration),
+                'total_distance_meters': round(total_distance, 1),
+                'edge_count': len(serializer.data)
+            }
+        })

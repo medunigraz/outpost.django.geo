@@ -1,3 +1,4 @@
+import json
 from django.conf import settings
 from drf_haystack.serializers import HaystackSerializer
 from outpost.django.campusonline import serializers as campusonline
@@ -97,11 +98,15 @@ class NodeSerializer(GeoFeatureModelSerializer):
         return obj.polymorphic_ctype.name
 
     def to_internal_value(self, data):
-        if "crs" not in data.get("center"):
-            data["center"]["crs"] = {
+        center = data.get("center")
+        if isinstance(center, str):
+            center = json.loads(center)
+        if "crs" not in center:
+            center["crs"] = {
                 "type": "name",
                 "properties": {"name": f"EPSG:{settings.DEFAULT_SRID}"},
             }
+        data["center"] = center
         return super().to_internal_value(data)
 
 
@@ -123,6 +128,7 @@ class EdgeSerializer(GeoFeatureModelSerializer):
         source="destination", many=False, read_only=True
     )
     length = SerializerMethodField()
+    duration = SerializerMethodField()
 
     class Meta:
         model = models.Edge
@@ -131,6 +137,18 @@ class EdgeSerializer(GeoFeatureModelSerializer):
 
     def get_length(self, obj):
         return obj.path.length
+    
+    def get_duration(self, obj):
+        """
+        Calculate duration using category's formula
+        """
+        length = obj.path.length
+        
+        source_level = getattr(obj.source.level, 'order', 0)
+        dest_level = getattr(obj.destination.level, 'order', 0)
+        floors = abs(dest_level - source_level)
+        
+        return obj.category.calculate_duration(length, floors)
 
 
 class RoutingEdgeSerializer(EdgeSerializer):
@@ -150,3 +168,15 @@ class PointOfInterestInstanceSerializer(GeoFeatureModelSerializer):
         exclude = ("polymorphic_ctype", "deprecated")
         extra_kwargs = {"level": {"write_only": True, "required": False}}
         id_field = "id"
+
+    def to_internal_value(self, data):
+        center = data.get("center")
+        if isinstance(center, str):
+            center = json.loads(center)
+        if "crs" not in center:
+            center["crs"] = {
+                "type": "name",
+                "properties": {"name": f"EPSG:{settings.DEFAULT_SRID}"},
+            }
+        data["center"] = center
+        return super().to_internal_value(data)
