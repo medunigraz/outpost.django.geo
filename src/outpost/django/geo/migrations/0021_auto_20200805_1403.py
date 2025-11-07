@@ -9,18 +9,28 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('geo', '0020_auto_20191018_1010'),
+        ("geo", "0020_auto_20191018_1010"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='room',
-            name='category',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='geo.RoomCategory'),
+            model_name="room",
+            name="category",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="geo.RoomCategory",
+            ),
         ),
         migrations.AlterField(
-            model_name='room',
-            name='organization',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='structure.Organization'),
+            model_name="room",
+            name="organization",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="structure.Organization",
+            ),
         ),
     ]

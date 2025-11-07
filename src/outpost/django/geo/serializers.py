@@ -1,12 +1,17 @@
 import json
 from django.conf import settings
 from drf_haystack.serializers import HaystackSerializer
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from outpost.django.campusonline import serializers as campusonline
+from rest_framework.serializers import (
+    ModelSerializer,
+    SerializerMethodField,
+)
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from outpost.django.campusonline import serializers as campusonline
-
-from . import models, search_indexes
+from . import (
+    models,
+    search_indexes,
+)
 
 
 class BackgroundSerializer(GeoFeatureModelSerializer):
@@ -132,17 +137,17 @@ class EdgeSerializer(GeoFeatureModelSerializer):
 
     def get_length(self, obj):
         return obj.path.length
-    
+
     def get_duration(self, obj):
         """
         Calculate duration using category's formula
         """
         length = obj.path.length
-        
-        source_level = getattr(obj.source.level, 'order', 0)
-        dest_level = getattr(obj.destination.level, 'order', 0)
+
+        source_level = getattr(obj.source.level, "order", 0)
+        dest_level = getattr(obj.destination.level, "order", 0)
         floors = abs(dest_level - source_level)
-        
+
         return obj.category.calculate_duration(length, floors)
 
 

@@ -1,13 +1,20 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from django.db import connection
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_haystack.viewsets import HaystackViewSet
 from oauth2_provider.contrib.rest_framework import IsAuthenticatedOrTokenHasScope
+from outpost.django.base.mixins import (
+    GeoModelViewSet,
+    MediatypeNegotiationMixin,
+)
 from rest_framework.permissions import (
     AllowAny,
     DjangoModelPermissions,
     DjangoModelPermissionsOrAnonReadOnly,
 )
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import (
+    ModelViewSet,
+    ReadOnlyModelViewSet,
+)
 
 # from rest_framework_extensions.mixins import (
 #     CacheResponseAndETAGMixin,
@@ -20,11 +27,12 @@ from rest_framework_extensions.etag.mixins import ListETAGMixin
 from rest_framework_gis.filters import InBBoxFilter
 from reversion.views import RevisionMixin
 
-from outpost.django.base.mixins import GeoModelViewSet, MediatypeNegotiationMixin
-
 from . import filters
 from . import key_constructors as keys
-from . import models, serializers
+from . import (
+    models,
+    serializers,
+)
 
 
 class BackgroundViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
@@ -139,8 +147,7 @@ class NodeViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
 
 
 class EdgeCategoryViewSet(ModelViewSet):
-    """
-    """
+    """"""
 
     queryset = models.EdgeCategory.objects.all()
     serializer_class = serializers.EdgeCategorySerializer
@@ -181,8 +188,7 @@ class EdgeViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
 
 
 class PointOfInterestViewSet(ListETAGMixin, ListCacheResponseMixin, ModelViewSet):
-    """
-    """
+    """"""
 
     queryset = models.PointOfInterest.objects.all()
     serializer_class = serializers.PointOfInterestSerializer
@@ -195,8 +201,7 @@ class PointOfInterestViewSet(ListETAGMixin, ListCacheResponseMixin, ModelViewSet
 class PointOfInterestInstanceViewSet(
     ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet
 ):
-    """
-    """
+    """"""
 
     queryset = models.PointOfInterestInstance.objects.all()
     serializer_class = serializers.PointOfInterestInstanceSerializer
@@ -296,7 +301,9 @@ class RoutingEdgeViewSet(
             r.edge = e.id AND
             r.edge >= 0
         ORDER BY r.seq ASC
-    """.format(path_select=connection.ops.select % 'e.path')
+    """.format(
+        path_select=connection.ops.select % "e.path"
+    )
 
     def get_queryset(self):
         source = self.request.GET.get("from", None)
@@ -308,21 +315,23 @@ class RoutingEdgeViewSet(
             self.statement.format(accessible=str(accessible).upper()),
             dict(source=source, target=target),
         )
-    
+
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
-        
+
         # Calculate total duration
-        total_duration = sum(edge.get('duration', 0) for edge in serializer.data)
-        total_distance = sum(edge.get('length', 0) for edge in serializer.data)
-        
-        return Response({
-            'type': 'FeatureCollection',
-            'features': serializer.data,
-            'metadata': {
-                'total_duration': round(total_duration),
-                'total_distance_meters': round(total_distance, 1),
-                'edge_count': len(serializer.data)
+        total_duration = sum(edge.get("duration", 0) for edge in serializer.data)
+        total_distance = sum(edge.get("length", 0) for edge in serializer.data)
+
+        return Response(
+            {
+                "type": "FeatureCollection",
+                "features": serializer.data,
+                "metadata": {
+                    "total_duration": round(total_duration),
+                    "total_distance_meters": round(total_distance, 1),
+                    "edge_count": len(serializer.data),
+                },
             }
-        })
+        )
