@@ -321,18 +321,22 @@ class RoutingEdgeViewSet(
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
 
-        # Calculate total duration
-        total_duration = sum(edge.get("duration", 0) for edge in serializer.data)
-        total_distance = sum(edge.get("length", 0) for edge in serializer.data)
+        features = serializer.data.get("features", [])
+        total_duration = sum(
+            f.get("properties", {}).get("duration", 0) for f in features
+        )
+        total_distance = sum(
+            f.get("properties", {}).get("length", 0) for f in features
+        )
 
         return Response(
             {
                 "type": "FeatureCollection",
-                "features": serializer.data,
+                "features": features,
                 "metadata": {
                     "total_duration": round(total_duration),
                     "total_distance_meters": round(total_distance, 1),
-                    "edge_count": len(serializer.data),
+                    "edge_count": len(features),
                 },
             }
         )
