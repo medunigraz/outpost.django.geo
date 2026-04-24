@@ -11,6 +11,7 @@ from rest_framework.permissions import (
     DjangoModelPermissions,
     DjangoModelPermissionsOrAnonReadOnly,
 )
+from rest_framework.response import Response
 from rest_framework.viewsets import (
     ModelViewSet,
     ReadOnlyModelViewSet,
@@ -40,7 +41,7 @@ class BackgroundViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     serializer_class = serializers.BackgroundSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
-    bbox_filter_field = "layout"
+    bbox_filter_field = "outline"
     filter_backends = (InBBoxFilter,)
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.BackgroundListKeyConstructor()

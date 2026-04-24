@@ -1,3 +1,4 @@
+import logging
 from itertools import chain
 
 import reversion
@@ -20,6 +21,8 @@ from outpost.django.base.models import RelatedManager
 from polymorphic.models import PolymorphicModel
 
 from sympy.parsing.sympy_parser import parse_expr
+
+logger = logging.getLogger(__name__)
 
 
 class OriginMixin(models.Model):
