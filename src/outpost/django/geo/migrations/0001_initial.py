@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("contenttypes", "0002_remove_content_type_name"),
-        ("campusonline", "0002_building_floor_room_roomcategory"),
+        ("campusonline", "0001_initial"),
         ("base", "0002_icon"),
     ]
 
