@@ -11,6 +11,7 @@ from rest_framework.permissions import (
     DjangoModelPermissions,
     DjangoModelPermissionsOrAnonReadOnly,
 )
+from rest_framework.response import Response
 from rest_framework.viewsets import (
     ModelViewSet,
     ReadOnlyModelViewSet,
@@ -40,7 +41,7 @@ class BackgroundViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     serializer_class = serializers.BackgroundSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
-    bbox_filter_field = "layout"
+    bbox_filter_field = "outline"
     filter_backends = (InBBoxFilter,)
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.BackgroundListKeyConstructor()
@@ -272,7 +273,7 @@ class RoutingEdgeViewSet(
                     ST_X(ns.center) AS x1,
                     ST_Y(ns.center) AS y1,
                     ST_X(nd.center) AS x2,
-                    ST_Y(ns.center) AS y2
+                    ST_Y(nd.center) AS y2
                 FROM
                     geo_edge e,
                     geo_edgecategory c,
@@ -314,4 +315,28 @@ class RoutingEdgeViewSet(
         return models.Edge.objects.raw(
             self.statement.format(accessible=str(accessible).upper()),
             dict(source=source, target=target),
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+
+        features = serializer.data.get("features", [])
+        total_duration = sum(
+            f.get("properties", {}).get("duration", 0) for f in features
+        )
+        total_distance = sum(
+            f.get("properties", {}).get("length", 0) for f in features
+        )
+
+        return Response(
+            {
+                "type": "FeatureCollection",
+                "features": features,
+                "metadata": {
+                    "total_duration": round(total_duration),
+                    "total_distance_meters": round(total_distance, 1),
+                    "edge_count": len(features),
+                },
+            }
         )

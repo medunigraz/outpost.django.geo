@@ -48,6 +48,7 @@ setup(
     ],
     install_requires=[
         'outpost.django',
+        'sympy>=1.7',
     ],
     packages=find_namespace_packages(
         where='src',
