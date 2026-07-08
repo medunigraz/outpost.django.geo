@@ -327,9 +327,7 @@ class RoutingEdgeViewSet(
         total_duration = sum(
             f.get("properties", {}).get("duration", 0) for f in features
         )
-        total_distance = sum(
-            f.get("properties", {}).get("length", 0) for f in features
-        )
+        total_distance = sum(f.get("properties", {}).get("length", 0) for f in features)
 
         return Response(
             {
