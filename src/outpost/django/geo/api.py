@@ -76,7 +76,9 @@ class RoomViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
         ?level=<id>&category=<id>
     """
 
-    queryset = models.Room.objects.filter(deprecated=False, virtual=False)
+    queryset = models.Room.objects.filter(
+        deprecated=False, virtual=False
+    ).select_related("category", "campusonline", "organization")
     serializer_class = serializers.RoomSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
