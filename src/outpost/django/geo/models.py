@@ -17,7 +17,6 @@ from ordered_model.models import OrderedModel
 from outpost.django.base.decorators import signal_connect
 from outpost.django.base.fields import LowerCaseCharField
 from outpost.django.base.key_constructors import UpdatedAtKeyBit
-from outpost.django.base.models import RelatedManager
 from polymorphic.models import PolymorphicModel
 
 from sympy.parsing.sympy_parser import parse_expr
@@ -242,8 +241,6 @@ class Room(OriginMixin, Node):
     organization = models.ForeignKey(
         "structure.Organization", null=True, blank=True, on_delete=models.SET_NULL
     )
-
-    objects = RelatedManager(select=("category", "campusonline"))
 
     class Meta:
         ordering = ("campusonline__name_full",)
