@@ -58,7 +58,7 @@ class RoomCategoryViewSet(RevisionMixin, ModelViewSet):
     queryset = models.RoomCategory.objects.all()
     serializer_class = serializers.RoomCategorySerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
-    filter_fields = ("searchable",)
+    filterset_fields = ("searchable",)
 
 
 class RoomViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
@@ -84,7 +84,7 @@ class RoomViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     pagination_class = None
     bbox_filter_field = "layout"
     filter_backends = (DjangoFilterBackend, InBBoxFilter)
-    filter_class = filters.RoomFilter
+    filterset_class = filters.RoomFilter
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.RoomListKeyConstructor()
     list_etag_func = keys.RoomListKeyConstructor()
@@ -102,7 +102,7 @@ class DoorViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, InBBoxFilter)
-    filter_class = filters.DoorFilter
+    filterset_class = filters.DoorFilter
     bbox_filter_field = "layout"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.DoorListKeyConstructor()
@@ -115,7 +115,7 @@ class FloorViewSet(ListETAGMixin, ListCacheResponseMixin, RevisionMixin, ModelVi
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, InBBoxFilter)
-    filter_class = filters.FloorFilter
+    filterset_class = filters.FloorFilter
     bbox_filter_field = "outline"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.FloorListKeyConstructor()
@@ -128,7 +128,7 @@ class BuildingViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, InBBoxFilter)
-    filter_class = filters.BuildingFilter
+    filterset_class = filters.BuildingFilter
     bbox_filter_field = "outline"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.BuildingListKeyConstructor()
@@ -141,7 +141,7 @@ class NodeViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     permission_classes = (IsAuthenticatedOrTokenHasScope, DjangoModelPermissions)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, InBBoxFilter)
-    filter_class = filters.NodeFilter
+    filterset_class = filters.NodeFilter
     bbox_filter_field = "center"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.NodeListKeyConstructor()
@@ -183,7 +183,7 @@ class EdgeViewSet(ListETAGMixin, ListCacheResponseMixin, GeoModelViewSet):
     required_scopes = ("editor",)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, InBBoxFilter)
-    filter_class = filters.EdgeFilter
+    filterset_class = filters.EdgeFilter
     bbox_filter_field = "path"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.EdgeListKeyConstructor()
@@ -211,7 +211,7 @@ class PointOfInterestInstanceViewSet(
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
     pagination_class = None
     filter_backends = (DjangoFilterBackend, InBBoxFilter)
-    filter_class = filters.PointOfInterestInstanceFilter
+    filterset_class = filters.PointOfInterestInstanceFilter
     bbox_filter_field = "center"
     bbox_filter_include_overlapping = True
     list_cache_key_func = keys.PointOfInterestInstanceListKeyConstructor()
@@ -304,9 +304,7 @@ class RoutingEdgeViewSet(
             r.edge = e.id AND
             r.edge >= 0
         ORDER BY r.seq ASC
-    """.format(
-        path_select=connection.ops.select % "e.path"
-    )
+    """.format(path_select=connection.ops.select % "e.path")
 
     def get_queryset(self):
         source = self.request.GET.get("from", None)
