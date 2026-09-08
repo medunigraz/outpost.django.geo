@@ -304,7 +304,9 @@ class RoutingEdgeViewSet(
             r.edge = e.id AND
             r.edge >= 0
         ORDER BY r.seq ASC
-    """.format(path_select=connection.ops.select % "e.path")
+    """.format(
+        path_select=connection.ops.select % "e.path"
+    )
 
     def get_queryset(self):
         source = self.request.GET.get("from", None)
