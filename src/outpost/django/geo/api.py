@@ -298,7 +298,7 @@ class RoutingEdgeViewSet(
                 %(source)s::integer,
                 %(target)s::integer,
                 directed := false,
-                heuristic := 3
+                heuristic := 0
             ) r
         WHERE
             r.edge = e.id AND
