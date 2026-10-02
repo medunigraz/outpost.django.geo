@@ -5,6 +5,7 @@ from rest_framework_extensions.key_constructor.constructors import DefaultKeyCon
 
 class RoutingEdgeListKeyConstructor(DefaultKeyConstructor):
     route = bits.QueryParamsKeyBit(["from", "to", "accessible"])
+    updated_at = UpdatedAtKeyBit()
 
 
 class BackgroundListKeyConstructor(DefaultKeyConstructor):
