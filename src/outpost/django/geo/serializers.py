@@ -152,7 +152,12 @@ class EdgeSerializer(GeoFeatureModelSerializer):
 
 
 class RoutingEdgeSerializer(EdgeSerializer):
-    pass
+    def get_duration(self, obj):
+        """
+        Walking time in seconds from the routing query: the time the route was
+        chosen by, without the category's preference multiplicator.
+        """
+        return obj.duration or 0.0
 
 
 class PointOfInterestSerializer(ModelSerializer):

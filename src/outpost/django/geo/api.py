@@ -244,6 +244,10 @@ class RoutingEdgeViewSet(
     list_cache_key_func = keys.RoutingEdgeListKeyConstructor()
     list_etag_func = keys.RoutingEdgeListKeyConstructor()
 
+    # Cost is walking time in seconds times the category's preference multiplicator.
+    # Time = real metres / walking speed + the category's addition + its boarding,
+    # charged half on each edge into or out of a chain of boarding edges, so a lift
+    # ride pays the wait once. The duration returned per edge is the time alone.
     statement = """
         SELECT
             r.seq AS sequence,
@@ -253,47 +257,85 @@ class RoutingEdgeViewSet(
             {path_select} AS path,
             e.destination_id AS destination_id,
             e.source_id AS source_id,
-            e.category_id AS category_id
+            e.category_id AS category_id,
+            r.cost / NULLIF(c.multiplicator, 0) AS duration
         FROM
             geo_edge e,
+            geo_edgecategory c,
             pgr_aStar(
                 '
+                WITH boarding AS (
+                    SELECT
+                        n.node AS node,
+                        MAX(c.boarding) AS boarding
+                    FROM
+                        (
+                            SELECT source_id AS node, category_id FROM geo_edge
+                            UNION ALL
+                            SELECT destination_id AS node, category_id FROM geo_edge
+                        ) n,
+                        geo_edgecategory c
+                    WHERE
+                        n.category_id = c.id AND
+                        c.boarding > 0
+                    GROUP BY
+                        n.node
+                )
                 SELECT
-                    e.id AS id,
-                    ns.id AS source,
-                    nd.id AS target,
-                    (ST_LENGTH(e.path) + c.addition) * c.multiplicator AS cost,
+                    t.id AS id,
+                    t.source AS source,
+                    t.target AS target,
+                    t.seconds * t.multiplicator AS cost,
                     CASE
-                        e.one_way
+                        t.one_way
                     WHEN
                         TRUE
                     THEN
                         -1
                     ELSE
-                        (ST_LENGTH(e.path) + c.addition) * c.multiplicator
+                        t.seconds * t.multiplicator
                     END AS reverse_cost,
-                    ST_X(ns.center) AS x1,
-                    ST_Y(ns.center) AS y1,
-                    ST_X(nd.center) AS x2,
-                    ST_Y(nd.center) AS y2
+                    t.x1 AS x1,
+                    t.y1 AS y1,
+                    t.x2 AS x2,
+                    t.y2 AS y2
                 FROM
-                    geo_edge e,
-                    geo_edgecategory c,
-                    geo_node nd,
-                    geo_node ns
-                WHERE
-                    e.destination_id = nd.id AND
-                    e.source_id = ns.id AND
-                    e.category_id = c.id AND
-                    CASE
-                        e.accessible
-                    WHEN
-                        {{accessible}}
-                    THEN
-                        TRUE
-                    ELSE
-                        FALSE
-                    END
+                    (
+                        SELECT
+                            e.id AS id,
+                            ns.id AS source,
+                            nd.id AS target,
+                            e.one_way AS one_way,
+                            c.multiplicator AS multiplicator,
+                            ST_LENGTH(e.path) / COSH(ST_Y(ns.center) / {radius}) / {walking_speed}
+                            + c.addition
+                            + CASE
+                                WHEN c.boarding = 0 AND (bs.node IS NULL) <> (bd.node IS NULL)
+                                THEN COALESCE(bs.boarding, bd.boarding) / 2
+                                ELSE 0
+                            END AS seconds,
+                            ST_X(ns.center) AS x1,
+                            ST_Y(ns.center) AS y1,
+                            ST_X(nd.center) AS x2,
+                            ST_Y(nd.center) AS y2
+                        FROM
+                            geo_edge e
+                            JOIN geo_edgecategory c ON e.category_id = c.id
+                            JOIN geo_node nd ON e.destination_id = nd.id
+                            JOIN geo_node ns ON e.source_id = ns.id
+                            LEFT JOIN boarding bs ON bs.node = ns.id
+                            LEFT JOIN boarding bd ON bd.node = nd.id
+                        WHERE
+                            CASE
+                                e.accessible
+                            WHEN
+                                {{accessible}}
+                            THEN
+                                TRUE
+                            ELSE
+                                FALSE
+                            END
+                    ) t
                 '::text,
                 %(source)s::integer,
                 %(target)s::integer,
@@ -302,10 +344,13 @@ class RoutingEdgeViewSet(
             ) r
         WHERE
             r.edge = e.id AND
+            e.category_id = c.id AND
             r.edge >= 0
         ORDER BY r.seq ASC
     """.format(
-        path_select=connection.ops.select % "e.path"
+        path_select=connection.ops.select % "e.path",
+        radius=models.WEB_MERCATOR_RADIUS,
+        walking_speed=models.WALKING_SPEED,
     )
 
     def get_queryset(self):

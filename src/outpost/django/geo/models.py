@@ -29,6 +29,9 @@ logger = logging.getLogger(__name__)
 # (within 0.2 % of the geodesic length on every edge, checked 2026-10).
 WEB_MERCATOR_RADIUS = 6378137.0
 
+# Unhurried indoor walking pace in m/s, used for route times.
+WALKING_SPEED = 1.2
+
 
 def metres(geometry):
     return geometry.length / math.cosh(geometry.centroid.y / WEB_MERCATOR_RADIUS)
@@ -143,8 +146,24 @@ class Node(TimeStampedModel, PolymorphicModel):
 @reversion.register()
 class EdgeCategory(models.Model):
     name = models.CharField(max_length=64)
-    multiplicator = models.DecimalField(max_digits=4, decimal_places=1, default=1.0)
-    addition = models.DecimalField(max_digits=5, decimal_places=1, default=0)
+    multiplicator = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        default=1.0,
+        help_text="Routing preference: the time on an edge is multiplied by this to choose a route, the time shown is not. 1 is neutral, above 1 avoids.",
+    )
+    addition = models.DecimalField(
+        max_digits=5,
+        decimal_places=1,
+        default=0,
+        help_text="Seconds per edge on top of the walking time, e.g. per floor of stairs or lift travel.",
+    )
+    boarding = models.DecimalField(
+        max_digits=5,
+        decimal_places=1,
+        default=0,
+        help_text="Seconds once per ride on a chain of edges of this category, e.g. waiting for a lift. Half is charged on the edge into the chain, half on the edge out.",
+    )
 
     duration_formula = models.TextField(
         blank=True,
