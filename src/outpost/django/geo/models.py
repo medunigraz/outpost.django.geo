@@ -129,6 +129,7 @@ class Node(TimeStampedModel, PolymorphicModel):
         UpdatedAtKeyBit.update(self)
 
 
+@signal_connect
 @reversion.register()
 class EdgeCategory(models.Model):
     name = models.CharField(max_length=64)
@@ -174,6 +175,12 @@ class EdgeCategory(models.Model):
         except Exception as e:
             logger.warning(f"Failed to evaluate duration formula for {self.name}: {e}")
             return length / 1.4  # Default walking speed
+
+    def post_save(self, *args, **kwargs):
+        UpdatedAtKeyBit.update(Edge)
+
+    def post_delete(self, *args, **kwargs):
+        UpdatedAtKeyBit.update(Edge)
 
 
 @signal_connect
